@@ -64,8 +64,17 @@ void Monitor::State_Idle(void)
 
     if (this->timer == 4 || this->timer == 5)
         this->animator.frameID = 0;
-    else
-        this->animator.frameID = this->type;
+    else {
+		if (this->type != MONITOR_EXTRALIFE) {
+			this->animator.frameID = this->type;
+		}
+		else {
+			switch(Player->characterID) {
+				case ID_SONIC: this->animator.frameID = 5; break;
+				case ID_TAILS: this->animator.frameID = 8; break;
+			}
+		}
+	}
 
     foreach_active(Player, player)
     {
@@ -157,7 +166,15 @@ void Monitor::State_Powerup_Rise(void)
                 break;
             case MONITOR_EXTRALIFE:
                 globals->lives++;
-                Player::sVars->sfxYes.Play();
+				switch(this->target->characterID) {
+					default:
+						Player::sVars->sfxAchievement.Play();
+						break;
+						
+					case ID_SONIC:
+						Player::sVars->sfxYes.Play();
+						break;
+				}
                 break;
             case MONITOR_ROBOTNIK:
                 if (!this->target->invincibility) {

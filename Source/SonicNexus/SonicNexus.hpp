@@ -4,6 +4,16 @@
 
 // Enums
 
+enum PlayerIDs { 
+    ID_NONE     = 0 << 0,
+    ID_SONIC    = 1 << 0,
+    ID_TAILS    = 1 << 1,
+    ID_DEFAULT_PLAYER  = ID_SONIC,
+};
+
+#define GET_CHARACTER_ID(playerNum)                (((globals->playerID >> (8 * ((playerNum)-1))) & 0xFF))
+#define CHECK_CHARACTER_ID(characterID, playerNum) (((globals->playerID >> (8 * ((playerNum)-1))) & 0xFF) == (characterID))
+
 enum ScreenSplit { FORCE_SPLIT };
 
 enum PlaneFilterTypes {
@@ -62,6 +72,7 @@ struct GlobalVariables {
     static void Init(void *g);
 #endif
 
+    int32 playerID;
     int32 score;
     int32 lives;
     int32 recMilliseconds;

@@ -29,6 +29,7 @@ struct SignPost : RSDK::GameObject::Entity {
     // INSTANCE VARS
     // ==============================
     RSDK::StateMachine<SignPost> state;
+	int32 characterAnim;
     RSDK::Animator poleAnim;
     RSDK::Animator signAnim;
     int32 noSpins;

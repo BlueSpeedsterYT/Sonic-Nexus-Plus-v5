@@ -152,6 +152,8 @@ static void InitPublicFunctions()
     ADD_PUBLIC_FUNC(Player::State_Corkscrew_Run);
     ADD_PUBLIC_FUNC(Player::State_Corkscrew_Roll);
     ADD_PUBLIC_FUNC(Player::State_Tube_Rolling);
+    ADD_PUBLIC_FUNC(Player::State_Fly_Jump);
+    ADD_PUBLIC_FUNC(Player::State_Fly);
     ADD_PUBLIC_FUNC(Player::HandleMovement);
     ADD_PUBLIC_FUNC(Player::BoxCollision);
     ADD_PUBLIC_FUNC(Player::PlatformCollision);

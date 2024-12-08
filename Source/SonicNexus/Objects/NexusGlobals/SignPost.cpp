@@ -34,8 +34,18 @@ void SignPost::Create(void *data)
         this->drawGroup     = 3;
 
         this->state.Set(&SignPost::State_Waiting);
+		switch(Player->characterID) {
+			default:
+			case ID_SONIC:
+				characterAnim = 1;
+				break;
+			
+			case ID_TAILS:
+				characterAnim = 2;
+				break;
+		}
         this->poleAnim.SetAnimation(sVars->aniFrames, 0, true, 0);
-        this->signAnim.SetAnimation(sVars->aniFrames, 1, true, 0);
+        this->signAnim.SetAnimation(sVars->aniFrames, characterAnim, true, 0);
     }
 }
 
@@ -80,8 +90,8 @@ void SignPost::State_Spinning(void)
     if (this->signAnim.frameID != prevFrame) {
         if (this->signAnim.frameID == 4) {
             RSDK::Vector2 sparklePos;
-            sparklePos.x = TO_FIXED(Math::Rand(0, 48)) + this->position.x - 1572864;
-            sparklePos.y = TO_FIXED(Math::Rand(0, 32)) + this->position.y - 1835008;
+            sparklePos.x = TO_FIXED(Math::Rand(0, 48)) + this->position.x - TO_FIXED(24);
+            sparklePos.y = TO_FIXED(Math::Rand(0, 32)) + this->position.y - TO_FIXED(28);
 
             CREATE_ENTITY(Ring, Ring::RING_SPARKLE, sparklePos.x, sparklePos.y);
 
@@ -103,8 +113,8 @@ void SignPost::State_Spinning(void)
             }
             if (this->signAnim.frameID == 0) {
                 RSDK::Vector2 sparklePos;
-                sparklePos.x = TO_FIXED(Math::Rand(0, 48)) + this->position.x - 1572864;
-                sparklePos.y = TO_FIXED(Math::Rand(0, 32)) + this->position.y - 1835008;
+                sparklePos.x = TO_FIXED(Math::Rand(0, 48)) + this->position.x - TO_FIXED(24);
+                sparklePos.y = TO_FIXED(Math::Rand(0, 32)) + this->position.y - TO_FIXED(28);
 
                 CREATE_ENTITY(Ring, Ring::RING_SPARKLE, sparklePos.x, sparklePos.y);
             }
@@ -113,7 +123,7 @@ void SignPost::State_Spinning(void)
 
     foreach_active(Player, player)
     {
-        int32 screenBoundary = this->position.x + 20971520;
+        int32 screenBoundary = this->position.x + TO_FIXED(320);
         if (player->position.x > screenBoundary) {
             player->position.x = screenBoundary;
             player->groundVel  = 0;
@@ -131,7 +141,7 @@ void SignPost::State_Exit(void)
         if (player->controlMode == Player::CONTROLMODE_NONE)
             player->right = true;
 
-        int32 screenBoundary = this->position.x + 20971520;
+        int32 screenBoundary = this->position.x + TO_FIXED(320);
         if (player->position.x > screenBoundary) {
             player->position.x = screenBoundary;
             player->groundVel  = 0;
