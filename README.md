@@ -1,9 +1,7 @@
-# Sonic Nexus v5
-This is the Summer 2008 Demo of [Sonic Nexus](https://info.sonicretro.org/Sonic_Nexus) made by Taxman, ported to RSDKv5.
+# Sonic Nexus Plus v5
+This is the Summer 2008 Demo of [Sonic Nexus](https://info.sonicretro.org/Sonic_Nexus) made by Taxman, now expanded with the power of RSDKv5.
 
-This is a direct port of the game, using little to no code from other RSDKv5 projects. There are also no enhancments made to the original game, save for widescreen support.
-
-You can find the Drop Dash add-on [here](https://github.com/MegAmi24/Nexus-v5-DropDash).
+This is a enhanced and expanded direct port of the game, using the RSDKv5 port by [MegAmi24](https://github.com/MegAmi24/Sonic-Nexus-v5).
 
 # How to Build
 
@@ -11,7 +9,7 @@ You can find the Drop Dash add-on [here](https://github.com/MegAmi24/Nexus-v5-Dr
 First, you will need to clone the repository containing the source code. To do this, you need to install Git, which you can find [here](https://git-scm.com/downloads).
 
 Clone the repo **recursively**, using:
-`git clone https://github.com/MegAmi24/Sonic-Nexus-v5 --recursive`
+`git clone https://github.com/BlueSpeedsterYT/Sonic-Nexus-Plus-v5 --recursive`
 
 If you've already cloned the repo, run these commands inside of the repository to ensure the clone is up-to-date:
 ```
