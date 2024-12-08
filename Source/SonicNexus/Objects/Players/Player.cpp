@@ -157,6 +157,7 @@ void Player::Create(void *data)
                 this->aniFrames = sVars->tailsFrames;
                 break;
         }
+		
         this->playerID = RSDK_GET_ENTITY(SLOT_PLAYER1, Player);
         
         this->camera = RSDK_GET_ENTITY(SLOT_CAMERA1, Camera);
@@ -653,6 +654,13 @@ void Player::Main(void)
         if (this->lookPos < 0)
             this->lookPos += 2;
     }
+	
+	//Reset Flight
+	if (this->animator.animationID != ANI_FLYING && this->animator.animationID != ANI_FLYINGTIRED)
+			sVars->sfxFlying.Stop();
+			sVars->sfxTired.Stop();
+			this->flightVelocity = 0;
+	}
 }
 
 void Player::State_Normal_Ground_Movement(void)
@@ -758,6 +766,18 @@ void Player::State_Air_Movement(void)
     if (!this->onGround) {
         ProcessDefaultGravityTrue(this);
 
+		if(this->characterID == ID_TAILS)
+		{
+			if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
+					ProcessDefaultGravityTrue(this);
+					this->state.Set(&Player::State_Fly);
+					this->flightVelocity = 2048;
+
+					sVars->sfxFlying.Play();
+					this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
+			}
+		}
+
         if (this->animator.animationID == ANI_BOUNCING && this->velocity.y >= 0)
             this->animator.SetAnimation(this->aniFrames, ANI_WALKING, false, 0);
     }
@@ -797,6 +817,18 @@ void Player::State_Rolling_Jump(void)
 
     if (!this->onGround) {
         ProcessDefaultGravityTrue(this);
+		
+		if(this->characterID == ID_TAILS)
+		{
+			if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
+					ProcessDefaultGravityTrue(this);
+					this->state.Set(&Player::State_Fly);
+					this->flightVelocity = 2048;
+
+					sVars->sfxFlying.Play();
+					this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
+			}
+		}
     }
     else {
         this->state.Set(&Player::State_Normal_Ground_Movement);
@@ -1188,7 +1220,7 @@ void Player::State_Fly_Jump(void) {
 	
 	ProcessDefaultAirMovement(this);
 
-	if (this->gravity == true) {
+	if (!this->onGround) {
 
 		ProcessDefaultGravityTrue(this);
 		this->state.Set(&Player::State_Fly);
@@ -1211,11 +1243,11 @@ void Player::State_Fly(void)
     SET_CURRENT_STATE();
 	
 	ProcessDefaultAirMovement(this);
-	if (this->gravity == true) {
+	if (!this->onGround) {
 		this->velocity.x = this->groundVel;
 
 		if (this->velocity.y < -65536) {
-			this->flightVelocity = 2048
+			this->flightVelocity = 2048;
 		}
 		else {
 			if (this->velocity.y < 1) {
@@ -1223,7 +1255,7 @@ void Player::State_Fly(void)
 					this->spinDash++;
 				}
 				else {
-					this->flightVelocity = 2048
+					this->flightVelocity = 2048;
 				}
 			}
 		}

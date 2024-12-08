@@ -34,18 +34,17 @@ void SignPost::Create(void *data)
         this->drawGroup     = 3;
 
         this->state.Set(&SignPost::State_Waiting);
-		switch(Player->characterID) {
+        this->poleAnim.SetAnimation(sVars->aniFrames, 0, true, 0);
+		switch(GET_CHARACTER_ID(1)) {
 			default:
 			case ID_SONIC:
-				characterAnim = 1;
+				this->signAnim.SetAnimation(sVars->aniFrames, 1, true, 0);
 				break;
 			
 			case ID_TAILS:
-				characterAnim = 2;
+				this->signAnim.SetAnimation(sVars->aniFrames, 2, true, 0);
 				break;
 		}
-        this->poleAnim.SetAnimation(sVars->aniFrames, 0, true, 0);
-        this->signAnim.SetAnimation(sVars->aniFrames, characterAnim, true, 0);
     }
 }
 

@@ -69,7 +69,7 @@ void Monitor::State_Idle(void)
 			this->animator.frameID = this->type;
 		}
 		else {
-			switch(Player->characterID) {
+			switch(GET_CHARACTER_ID(1)) {
 				case ID_SONIC: this->animator.frameID = 5; break;
 				case ID_TAILS: this->animator.frameID = 8; break;
 			}
