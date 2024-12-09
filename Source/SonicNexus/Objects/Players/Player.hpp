@@ -6,23 +6,23 @@ namespace GameLogic
 {
 
 struct Player : RSDK::GameObject::Entity {
-    
+
     // ==============================
     // ENUMS
     // ==============================
-    
+
     enum PlayerModes {
         PLAYERMODE_NORMAL,
         PLAYERMODE_PARACHUTE,
         PLAYERMODE_DEBUG,
     };
-    
+
     enum PlayerControlModes {
         CONTROLMODE_NONE     = -1,
         CONTROLMODE_NORMAL   = 0,
         CONTROLMODE_SIDEKICK = 1,
     };
-    
+
     enum PlayerAni {
         ANI_STOPPED,
         ANI_WAITING,
@@ -46,30 +46,30 @@ struct Player : RSDK::GameObject::Entity {
         ANI_FLAILINGLEFT,
         ANI_FLAILINGRIGHT,
         ANI_SLIDING,
-		ANI_FLYING = 25,
-		ANI_FLYINGTIRED = 26,
-		//TODO: Add Swimming versions
+        ANI_FLYING = 25,
+        ANI_FLYINGTIRED = 26,
+        //TODO: Add Swimming versions
         ANI_CORKSCREW  = 34,
-		ANI_FINISHPOSE = 35,
+        ANI_FINISHPOSE = 35,
         ANI_HANGING    = 43,
     };
-    
+
     enum Shields {
         SHIELD_NONE,
         SHIELD_BLUE,
     };
-    
+
     enum HurtTypes {
         HURT_NONE,
         HURT_HASSHIELD,
         HURT_RINGLOSS,
         HURT_DIE,
     };
-    
+
     // ==============================
     // STRUCTS
     // ==============================
-    
+
     struct PlayerMovementStats {
         int32 topSpeed;
         int32 acceleration;
@@ -81,11 +81,11 @@ struct Player : RSDK::GameObject::Entity {
         int32 rollingAcceleration;
         int32 rollingDeceleration;
     };
-    
+
     // ==============================
     // STATIC VARS
     // ==============================
-    
+
     struct Static : RSDK::GameObject::Static {
         uint16 delayUp;
         uint16 delayDown;
@@ -95,6 +95,7 @@ struct Player : RSDK::GameObject::Entity {
         uint16 delayJumpHold;
         RSDK::SpriteAnimation sonicFrames;
         RSDK::SpriteAnimation tailsFrames;
+        RSDK::SpriteAnimation knuxFrames;
         RSDK::SoundFX sfxJump;
         RSDK::SoundFX sfxLoseRings;
         RSDK::SoundFX sfxHurt;
@@ -111,7 +112,7 @@ struct Player : RSDK::GameObject::Entity {
         bool32 pauseEnabled;
         bool32 frameAdvance;
     };
-    
+
     // ==============================
     // INSTANCE VARS
     // ==============================
@@ -122,10 +123,8 @@ struct Player : RSDK::GameObject::Entity {
     RSDK::StateMachine<Player> state;
     RSDK::Animator animator;
     RSDK::SpriteAnimation aniFrames;
-    uint16 playerID;
     RSDK::Hitbox *outerbox;
     RSDK::Hitbox *innerbox;
-    int32 characterID;
     uint8 skidding;
     uint8 pushing;
     int8 controlMode;
@@ -153,7 +152,7 @@ struct Player : RSDK::GameObject::Entity {
     int32 invincibility;
     int32 flashing;
     int32 minRollSpeed;
-	int32 flightVelocity;
+    int32 flightVelocity;
     int32 ringExtraLife;
     RSDK::Hitbox *normalbox;
     RSDK::Hitbox *jumpbox;
@@ -185,7 +184,7 @@ struct Player : RSDK::GameObject::Entity {
     // ==============================
     // FUNCTIONS
     // ==============================
-    
+
     // General Player Functions (ported from RSDKv2)
     static void ProcessPlayerControl(Player *player);
     static void SetMovementStats(PlayerMovementStats *stats);

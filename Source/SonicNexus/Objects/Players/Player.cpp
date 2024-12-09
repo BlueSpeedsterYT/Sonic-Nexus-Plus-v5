@@ -144,26 +144,29 @@ void Player::Draw(void)
 
 void Player::Create(void *data)
 {
+    switch(globals->playerID)
+    {
+        default:
+        case ID_SONIC:
+            this->aniFrames = sVars->sonicFrames;
+			break;
+			
+        case ID_TAILS:
+            this->aniFrames = sVars->tailsFrames;
+			break;
+			
+		case ID_KNUCKLES:
+            this->aniFrames = sVars->knuxFrames;
+			break;
+    }
+	this->aniFrames = sVars->sonicFrames;
     this->visible   = true;
 
     if (!sceneInfo->inEditor) {
-        switch(this->characterID) {
-            default:
-            case ID_SONIC:
-                this->aniFrames = sVars->sonicFrames;
-                break;
-            
-            case ID_TAILS:
-                this->aniFrames = sVars->tailsFrames;
-                break;
-        }
-		
-        this->playerID = RSDK_GET_ENTITY(SLOT_PLAYER1, Player);
-        
         this->camera = RSDK_GET_ENTITY(SLOT_CAMERA1, Camera);
-        
+
         analogStickInfoL[this->Slot() + 1].deadzone = 0.3f;
-        
+
         this->state.Set(&Player::State_Normal_Ground_Movement);
         this->active         = ACTIVE_NORMAL;
         this->onGround       = false;
@@ -172,9 +175,9 @@ void Player::Create(void *data)
         this->drawFX         = FX_FLIP | FX_ROTATE;
         this->drawGroup      = 4;
         SetMovementStats(&this->stats);
-        
+
         this->collisionLayers = StageSetup::sVars->collisionLayers;
-        
+
         // v2 stores these in the animation files??????? wtf???????
         this->animator.SetAnimation(this->aniFrames, ANI_WALKING, true, 0);
         this->walkingSpeed = this->animator.speed - 20;
@@ -184,33 +187,32 @@ void Player::Create(void *data)
         this->animator.SetAnimation(this->aniFrames, ANI_JUMPING, true, 0);
         this->jumpingSpeed = this->animator.speed - 48;
         this->jumpbox      = this->animator.GetHitbox(0);
-        
+
         this->animator.SetAnimation(this->aniFrames, ANI_STOPPED, true, 0);
         this->animCheck     = ANI_STOPPED;
         this->ringExtraLife = 100;
     }
-    else {
-        this->animator.SetAnimation(sVars->sonicFrames, ANI_STOPPED, true, 0);
-        this->characterID = ID_SONIC;
-	}
 }
 
 void Player::StageLoad(void)
 {
-    globals->playerID = ID_DEFAULT_PLAYER;
-	
-	Dev::AddViewableVariable("Debug Mode", &sceneInfo->debugMode, Dev::VIEWVAR_BOOL, false, true);
+    Dev::AddViewableVariable("Debug Mode", &sceneInfo->debugMode, Dev::VIEWVAR_BOOL, false, true);
 
     sVars->active = ACTIVE_ALWAYS;
 
-    switch(this->characterID) {
+    switch(globals->playerID)
+    {
         default:
-		case ID_SONIC:
-		    sVars->sonicFrames.Load("Sonic/SonicClassic.bin", SCOPE_GLOBAL);
+        case ID_SONIC:
+            sVars->sonicFrames.Load("Sonic/SonicClassic.bin", SCOPE_GLOBAL);
 			break;
 			
-		case ID_TAILS:
-            sVars->tailsFrames.Load("Sonic/SonicClassic.bin", SCOPE_GLOBAL);
+        case ID_TAILS:
+            sVars->tailsFrames.Load("Tails/TailsClassic.bin", SCOPE_GLOBAL);
+			break;
+			
+		case ID_KNUCKLES:
+            sVars->knuxFrames.Load("Knuckles/KnucklesClassic.bin", SCOPE_GLOBAL);
 			break;
     }
 
@@ -655,12 +657,12 @@ void Player::Main(void)
             this->lookPos += 2;
     }
 	
-	//Reset Flight
-	if (this->animator.animationID != ANI_FLYING && this->animator.animationID != ANI_FLYINGTIRED)
-			sVars->sfxFlying.Stop();
-			sVars->sfxTired.Stop();
-			this->flightVelocity = 0;
-	}
+    //Reset Flight
+    if (this->animator.animationID != ANI_FLYING && this->animator.animationID != ANI_FLYINGTIRED)
+        sVars->sfxFlying.Stop();
+        sVars->sfxTired.Stop();
+        this->flightVelocity = 0;
+    }
 }
 
 void Player::State_Normal_Ground_Movement(void)
@@ -765,19 +767,18 @@ void Player::State_Air_Movement(void)
 
     if (!this->onGround) {
         ProcessDefaultGravityTrue(this);
+        if(globals->playerID == ID_TAILS)
+        {
+            if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
+                ProcessDefaultGravityTrue(this);
+                this->state.Set(&Player::State_Fly);
+                this->flightVelocity = 2048;
 
-		if(this->characterID == ID_TAILS)
-		{
-			if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
-					ProcessDefaultGravityTrue(this);
-					this->state.Set(&Player::State_Fly);
-					this->flightVelocity = 2048;
-
-					sVars->sfxFlying.Play();
-					this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
-			}
-		}
-
+                sVars->sfxFlying.Play();
+                this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
+            }
+        }
+        
         if (this->animator.animationID == ANI_BOUNCING && this->velocity.y >= 0)
             this->animator.SetAnimation(this->aniFrames, ANI_WALKING, false, 0);
     }
@@ -817,18 +818,17 @@ void Player::State_Rolling_Jump(void)
 
     if (!this->onGround) {
         ProcessDefaultGravityTrue(this);
-		
-		if(this->characterID == ID_TAILS)
-		{
-			if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
-					ProcessDefaultGravityTrue(this);
-					this->state.Set(&Player::State_Fly);
-					this->flightVelocity = 2048;
+        if(globals->playerID == ID_TAILS)
+        {
+            if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
+                ProcessDefaultGravityTrue(this);
+                this->state.Set(&Player::State_Fly);
+                this->flightVelocity = 2048;
 
-					sVars->sfxFlying.Play();
-					this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
-			}
-		}
+                sVars->sfxFlying.Play();
+                this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
+            }
+        }
     }
     else {
         this->state.Set(&Player::State_Normal_Ground_Movement);
@@ -855,9 +855,16 @@ void Player::State_Looking_Up(void)
             this->timer = 0;
         }
         else if (this->jumpPress) {
-            this->state.Set(&Player::State_Peelout);
-            this->spinDash = 0;
-            sVars->sfxCharge.Play();
+            if (globals->playerID == ID_SONIC) {
+                this->state.Set(&Player::State_Peelout);
+                this->spinDash = 0;
+                sVars->sfxCharge.Play();
+            }
+            else {
+                ProcessDefaultJumpAction(this);
+                this->state.Set(&Player::State_Air_Movement);
+                sVars->sfxJump.Play();
+            }
         }
     }
 }
@@ -1051,7 +1058,7 @@ void Player::State_Getting_Hurt(void)
             }
 
             this->rings         = 0;
-            this->ringExtraLife = 99;
+            this->ringExtraLife = 100;
             break;
         }
         case HURT_DIE: {

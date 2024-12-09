@@ -69,9 +69,10 @@ void Monitor::State_Idle(void)
 			this->animator.frameID = this->type;
 		}
 		else {
-			switch(GET_CHARACTER_ID(1)) {
+			switch(globals->playerID) {
 				case ID_SONIC: this->animator.frameID = 5; break;
 				case ID_TAILS: this->animator.frameID = 8; break;
+				case ID_KNUCKLES: this->animator.frameID = 9; break;
 			}
 		}
 	}
@@ -166,7 +167,7 @@ void Monitor::State_Powerup_Rise(void)
                 break;
             case MONITOR_EXTRALIFE:
                 globals->lives++;
-				switch(this->target->characterID) {
+				switch(globals->playerID) {
 					default:
 						Player::sVars->sfxAchievement.Play();
 						break;

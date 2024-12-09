@@ -8,6 +8,7 @@ enum PlayerIDs {
     ID_NONE     = 0 << 0,
     ID_SONIC    = 1 << 0,
     ID_TAILS    = 1 << 1,
+    ID_KNUCKLES = 1 << 2,
     ID_DEFAULT_PLAYER  = ID_SONIC,
 };
 
