@@ -33,7 +33,7 @@ void ActFinish::Draw(void)
 			break;
 		
 		case ID_KNUCKLES:
-			this->gotThroughAnim.frameID = 4;
+			this->gotThroughAnim.frameID = 5;
 			break;
 	}
     this->gotThroughAnim.DrawSprite(&pos, true);
