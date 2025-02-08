@@ -144,22 +144,20 @@ void Player::Draw(void)
 
 void Player::Create(void *data)
 {
-    switch(globals->playerID)
-    {
+    switch (this->characterID) {
         default:
         case ID_SONIC:
             this->aniFrames = sVars->sonicFrames;
 			break;
-			
+
         case ID_TAILS:
             this->aniFrames = sVars->tailsFrames;
 			break;
-			
-		case ID_KNUCKLES:
+
+        case ID_KNUCKLES:
             this->aniFrames = sVars->knuxFrames;
-			break;
+            break;
     }
-	this->aniFrames = sVars->sonicFrames;
     this->visible   = true;
 
     if (!sceneInfo->inEditor) {
@@ -202,20 +200,19 @@ void Player::StageLoad(void)
 
     sVars->active = ACTIVE_ALWAYS;
 
-    switch(globals->playerID)
-    {
+    switch (this->characterID) {
         default:
         case ID_SONIC:
             sVars->sonicFrames.Load("Sonic/SonicClassic.bin", SCOPE_GLOBAL);
-			break;
-			
+            break;
+
         case ID_TAILS:
             sVars->tailsFrames.Load("Tails/TailsClassic.bin", SCOPE_GLOBAL);
-			break;
-			
-		case ID_KNUCKLES:
+            break;
+
+        case ID_KNUCKLES:
             sVars->knuxFrames.Load("Knuckles/KnucklesClassic.bin", SCOPE_GLOBAL);
-			break;
+            break;
     }
 
     sVars->sfxJump.Get("NexusGlobal/Jump.wav");
@@ -674,12 +671,13 @@ void Player::Main(void)
     }
 	
     //Reset Flight
-    if (this->animator.animationID != ANI_FLYING && this->animator.animationID != ANI_FLYINGTIRED)
+    if (this->animator.animationID != ANI_FLYING && this->animator.animationID != ANI_FLYINGTIRED) {
         sVars->sfxFlying.Stop();
         sVars->sfxTired.Stop();
         this->flightVelocity = 0;
     }
 }
+
 
 void Player::State_Normal_Ground_Movement(void)
 {
@@ -783,8 +781,7 @@ void Player::State_Air_Movement(void)
 
     if (!this->onGround) {
         ProcessDefaultGravityTrue(this);
-        if(globals->playerID == ID_TAILS)
-        {
+        if (this->characterID == ID_TAILS) {
             if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
                 ProcessDefaultGravityTrue(this);
                 this->state.Set(&Player::State_Fly);
@@ -834,8 +831,7 @@ void Player::State_Rolling_Jump(void)
 
     if (!this->onGround) {
         ProcessDefaultGravityTrue(this);
-        if(globals->playerID == ID_TAILS)
-        {
+        if (this->characterID == ID_TAILS) {
             if (this->jumpPress && this->animator.animationID == ANI_JUMPING) {
                 ProcessDefaultGravityTrue(this);
                 this->state.Set(&Player::State_Fly);
@@ -871,7 +867,7 @@ void Player::State_Looking_Up(void)
             this->timer = 0;
         }
         else if (this->jumpPress) {
-            if (globals->playerID == ID_SONIC) {
+            if (this->characterID == ID_SONIC) {
                 this->state.Set(&Player::State_Peelout);
                 this->spinDash = 0;
                 sVars->sfxCharge.Play();
@@ -1239,75 +1235,74 @@ void Player::State_Tube_Rolling(void)
 }
 
 void Player::State_Fly_Jump(void) {
-	SET_CURRENT_STATE();
-	
-	ProcessDefaultAirMovement(this);
+    SET_CURRENT_STATE();
 
-	if (!this->onGround) {
+    ProcessDefaultAirMovement(this);
 
-		ProcessDefaultGravityTrue(this);
-		this->state.Set(&Player::State_Fly);
-		this->flightVelocity = 2048;
+    if (!this->onGround) {
+        ProcessDefaultGravityTrue(this);
+        this->state.Set(&Player::State_Fly);
+        this->flightVelocity = 2048;
 
-		sVars->sfxFlying.Play();
-		this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
+        sVars->sfxFlying.Play();
+        this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
 
-		if (this->animator.animationID == ANI_BOUNCING && this->velocity.y >= 0)
-			this->animator.SetAnimation(this->aniFrames, ANI_WALKING, false, 0);
-	}
-	else {
-		this->state.Set(&Player::State_Normal_Ground_Movement);
+        if (this->animator.animationID == ANI_BOUNCING && this->velocity.y >= 0)
+            this->animator.SetAnimation(this->aniFrames, ANI_WALKING, false, 0);
+    }
+    else {
+        this->state.Set(&Player::State_Normal_Ground_Movement);
         ProcessDefaultGravityFalse(this);
-	}
+    }
 }
 
 void Player::State_Fly(void)
 {
     SET_CURRENT_STATE();
-	
-	ProcessDefaultAirMovement(this);
-	if (!this->onGround) {
-		this->velocity.x = this->groundVel;
 
-		if (this->velocity.y < -65536) {
-			this->flightVelocity = 2048;
-		}
-		else {
-			if (this->velocity.y < 1) {
-				if (this->spinDash < 60) {
-					this->spinDash++;
-				}
-				else {
-					this->flightVelocity = 2048;
-				}
-			}
-		}
+    ProcessDefaultAirMovement(this);
+    if (!this->onGround) {
+        this->velocity.x = this->groundVel;
 
-		this->velocity.y += this->flightVelocity;
-		if (this->timer < 480) {
-			this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
-			
-			this->timer++;
-			if (this->timer == 480) {
-				this->animator.SetAnimation(this->aniFrames, ANI_FLYINGTIRED, false, 0);
-				sVars->sfxFlying.Stop();
-				sVars->sfxTired.Play();
-			}
-			else {
-				if (this->jumpPress) {
-					this->flightVelocity = -8192;
-					this->spinDash = 0;
-				}
-			}
-		}
-		else {
-			this->animator.SetAnimation(this->aniFrames, ANI_FLYINGTIRED, false, 0);
-		}
-	}
-	else {
-		this->state.Set(&Player::State_Normal_Ground_Movement);
-		ProcessDefaultGravityFalse(this);
-	}
+        if (this->velocity.y < -65536) {
+            this->flightVelocity = 2048;
+        }
+        else {
+            if (this->velocity.y < 1) {
+                if (this->spinDash < 60) {
+                    this->spinDash++;
+                }
+                else {
+                    this->flightVelocity = 2048;
+                }
+            }
+        }
+
+        this->velocity.y += this->flightVelocity;
+        if (this->timer < 480) {
+            this->animator.SetAnimation(this->aniFrames, ANI_FLYING, false, 0);
+
+            this->timer++;
+            if (this->timer == 480) {
+                this->animator.SetAnimation(this->aniFrames, ANI_FLYINGTIRED, false, 0);
+                sVars->sfxFlying.Stop();
+                sVars->sfxTired.Play();
+            }
+            else {
+                if (this->jumpPress) {
+                    this->flightVelocity = -8192;
+                    this->spinDash = 0;
+                }
+            }
+        }
+        else {
+            this->animator.SetAnimation(this->aniFrames, ANI_FLYINGTIRED, false, 0);
+        }
+    }
+    else {
+        this->state.Set(&Player::State_Normal_Ground_Movement);
+        ProcessDefaultGravityFalse(this);
+    }
 }
 
 void Player::HandleMovement(void)

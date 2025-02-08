@@ -145,6 +145,7 @@ struct Player : RSDK::GameObject::Entity {
     int16 runningSpeed;
     int16 walkingSpeed;
     int16 jumpingSpeed;
+    int32 characterID;
     int32 rings;
     int32 spinDash;
     int32 aniJumpSpeed;

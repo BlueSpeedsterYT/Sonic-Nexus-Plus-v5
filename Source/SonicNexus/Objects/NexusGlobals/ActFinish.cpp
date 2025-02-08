@@ -22,20 +22,20 @@ void ActFinish::Draw(void)
     RSDK::Vector2 pos = this->line0Pos;
 
     // Draw Sonic Text
-	switch(globals->playerID) {
-		default:
-		case ID_SONIC:
-			this->gotThroughAnim.frameID = 3;
-			break;
-		
-		case ID_TAILS:
-			this->gotThroughAnim.frameID = 4;
-			break;
-		
-		case ID_KNUCKLES:
-			this->gotThroughAnim.frameID = 5;
-			break;
-	}
+    switch (Player->characterID) {
+        default:
+        case ID_SONIC:
+            this->gotThroughAnim.frameID = 3;
+            break;
+
+        case ID_TAILS:
+            this->gotThroughAnim.frameID = 4;
+            break;
+
+        case ID_KNUCKLES:
+            this->gotThroughAnim.frameID = 5;
+            break;
+    }
     this->gotThroughAnim.DrawSprite(&pos, true);
 
     // Draw Got Text

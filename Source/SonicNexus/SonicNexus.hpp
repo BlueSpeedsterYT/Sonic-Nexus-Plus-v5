@@ -73,7 +73,6 @@ struct GlobalVariables {
     static void Init(void *g);
 #endif
 
-    int32 playerID;
     int32 score;
     int32 lives;
     int32 recMilliseconds;
